@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Buscar IOC{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Buscar indicador</h2>
+
+{# --- Formulario de búsqueda --- #}
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <form method="get" action="/buscar" class="row g-2 align-items-end">
+      <div class="col-12 col-md-9">
+        <label class="form-label">Valor del indicador (URL, IP, dominio o hash)</label>
+        <input type="text" name="valor" class="form-control font-monospace"
+               placeholder="ej: http://malicious.example.com/payload  |  192.168.1.1  |  d41d8cd98f00b204e9800998ecf8427e"
+               value="{{ valor }}" autofocus>
+      </div>
+      <div class="col-12 col-md-3">
+        <button type="submit" class="btn btn-primary w-100">Buscar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{# --- Resultado --- #}
+{% if buscado %}
+  {% if resultado %}
+  <div class="alert alert-success py-2 mb-3">
+    <strong>&#x2713; Indicador encontrado</strong> en la plataforma CTI-IOC.
+  </div>
+  <div class="card shadow-sm">
+    <div class="card-header fw-semibold">Detalle del IOC</div>
+    <div class="card-body p-0">
+      <table class="table table-sm table-bordered mb-0">
+        <tbody>
+          <tr>
+            <th class="table-light" style="width:200px">Tipo</th>
+            <td><span class="badge bg-dark">{{ resultado.ioc_type }}</span>
+              {% if resultado.hash_algorithm %}
+              <small class="text-muted ms-1">({{ resultado.hash_algorithm }})</small>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th class="table-light">Valor</th>
+            <td><code class="text-break">{{ resultado.value }}</code></td>
+          </tr>
+          <tr>
+            <th class="table-light">Fuente</th>
+            <td>{{ resultado.source_name }}</td>
+          </tr>
+          <tr>
+            <th class="table-light">ID en la fuente</th>
+            <td><small class="text-muted">{{ resultado.source_id }}</small></td>
+          </tr>
+          <tr>
+            <th class="table-light">Estado</th>
+            <td>
+              {% if resultado.status == 'active' %}
+                <span class="badge bg-success">activo</span>
+              {% else %}
+                <span class="badge bg-secondary">inactivo</span>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th class="table-light">Confianza</th>
+            <td>
+              {% if resultado.confidence_level == 'high' %}
+                <span class="badge bg-danger">alta</span>
+              {% elif resultado.confidence_level == 'medium' %}
+                <span class="badge bg-warning text-dark">media</span>
+              {% else %}
+                <span class="badge bg-secondary">baja</span>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th class="table-light">Tipo de amenaza</th>
+            <td>{{ resultado.threat_type or '—' }}</td>
+          </tr>
+          <tr>
+            <th class="table-light">Primera vez visto</th>
+            <td>{{ resultado.first_seen[:19].replace('T', ' ') if resultado.first_seen else '—' }}</td>
+          </tr>
+          <tr>
+            <th class="table-light">Última vez visto</th>
+            <td>{{ resultado.last_seen[:19].replace('T', ' ') if resultado.last_seen else '—' }}</td>
+          </tr>
+          <tr>
+            <th class="table-light">Última recolección</th>
+            <td>{{ resultado.retrieved_at[:19].replace('T', ' ') }}</td>
+          </tr>
+          <tr>
+            <th class="table-light">Etiquetas</th>
+            <td>
+              {% if resultado.tags %}
+                {% for tag in resultado.tags %}
+                  <span class="badge bg-light text-dark border me-1">{{ tag }}</span>
+                {% endfor %}
+              {% else %}
+                <span class="text-muted">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th class="table-light">ID interno</th>
+            <td><small class="text-muted font-monospace">{{ resultado.id }}</small></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-warning">
+    <strong>&#x26A0; Indicador no registrado.</strong>
+    El valor <code class="ms-1">{{ valor }}</code> no se encuentra en la plataforma CTI-IOC.
+  </div>
+  {% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Error{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-7">
+    <div class="alert alert-danger shadow-sm">
+      <h4 class="alert-heading">&#x26A0; API no disponible</h4>
+      <p class="mb-0">{{ mensaje }}</p>
+    </div>
+    <a href="/" class="btn btn-outline-secondary btn-sm mt-2">Volver al inicio</a>
+  </div>
+</div>
+{% endblock %}

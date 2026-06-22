@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CTI-IOC{% endblock %} — Plataforma de Inteligencia</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f5f6fa; }
+    .navbar-brand { font-weight: 700; letter-spacing: 0.04em; font-size: 1.15rem; }
+    .card-stat { border: none; border-radius: .6rem; }
+    .card-stat .card-body { padding: 1.4rem 1.6rem; }
+    .card-stat .stat-num   { font-size: 2rem; font-weight: 700; line-height: 1.1; }
+    .card-stat .stat-label { font-size: 0.85rem; opacity: .85; margin-bottom: .3rem; }
+    .value-cell { max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    code { font-size: 0.82rem; }
+    .table th { white-space: nowrap; }
+    footer { font-size: 0.8rem; }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+  <div class="container">
+    <a class="navbar-brand" href="/">&#x1F6E1; CTI-IOC</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto gap-1">
+        <li class="nav-item">
+          <a class="nav-link{% if request.path == '/' %} active fw-semibold{% endif %}" href="/">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link{% if request.path == '/iocs' %} active fw-semibold{% endif %}" href="/iocs">IOCs</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link{% if request.path == '/buscar' %} active fw-semibold{% endif %}" href="/buscar">Buscar</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-4 flex-grow-1">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="bg-dark text-secondary text-center py-2">
+  CTI-IOC Platform &mdash; TFM MASTIC
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

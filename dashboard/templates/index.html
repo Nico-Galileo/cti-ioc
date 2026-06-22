@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Resumen de la plataforma</h2>
+  <small class="text-muted">Última actualización: {{ ahora }}</small>
+</div>
+
+{# --- Tarjetas de estadísticas --- #}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card card-stat text-white bg-primary shadow-sm">
+      <div class="card-body">
+        <div class="stat-label">Total IOCs</div>
+        <div class="stat-num">{{ stats.total | miles }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card card-stat text-white bg-success shadow-sm">
+      <div class="card-body">
+        <div class="stat-label">IOCs activos</div>
+        <div class="stat-num">{{ (stats.por_estado.get('active', 0)) | miles }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card card-stat text-white bg-info shadow-sm">
+      <div class="card-body">
+        <div class="stat-label">Fuentes integradas</div>
+        <div class="stat-num">{{ stats.por_fuente | length }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card card-stat text-white bg-secondary shadow-sm">
+      <div class="card-body">
+        <div class="stat-label">Tipos de indicador</div>
+        <div class="stat-num">{{ stats.por_tipo | length }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# --- Tablas de desglose --- #}
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Desglose por tipo</div>
+      <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr><th>Tipo</th><th class="text-end">Cantidad</th><th class="text-end">%</th></tr>
+          </thead>
+          <tbody>
+            {% for tipo, n in stats.por_tipo.items() %}
+            <tr>
+              <td><span class="badge bg-dark">{{ tipo }}</span></td>
+              <td class="text-end">{{ n | miles }}</td>
+              <td class="text-end text-muted">
+                {% if stats.total > 0 %}{{ "%.1f"|format(n / stats.total * 100) }}%{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Desglose por fuente</div>
+      <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr><th>Fuente</th><th class="text-end">Cantidad</th><th class="text-end">%</th></tr>
+          </thead>
+          <tbody>
+            {% for fuente, n in stats.por_fuente.items() %}
+            <tr>
+              <td>{{ fuente }}</td>
+              <td class="text-end">{{ n | miles }}</td>
+              <td class="text-end text-muted">
+                {% if stats.total > 0 %}{{ "%.1f"|format(n / stats.total * 100) }}%{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Desglose por estado</div>
+      <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr><th>Estado</th><th class="text-end">Cantidad</th><th class="text-end">%</th></tr>
+          </thead>
+          <tbody>
+            {% for estado, n in stats.por_estado.items() %}
+            <tr>
+              <td>
+                {% if estado == 'active' %}
+                  <span class="badge bg-success">activo</span>
+                {% else %}
+                  <span class="badge bg-secondary">inactivo</span>
+                {% endif %}
+              </td>
+              <td class="text-end">{{ n | miles }}</td>
+              <td class="text-end text-muted">
+                {% if stats.total > 0 %}{{ "%.1f"|format(n / stats.total * 100) }}%{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# --- Accesos directos --- #}
+<div class="row g-3 mt-3">
+  <div class="col-auto">
+    <a href="/iocs" class="btn btn-outline-primary btn-sm">Ver todos los IOCs &rarr;</a>
+  </div>
+  <div class="col-auto">
+    <a href="/iocs?estado=active" class="btn btn-outline-success btn-sm">Solo activos &rarr;</a>
+  </div>
+  <div class="col-auto">
+    <a href="/buscar" class="btn btn-outline-secondary btn-sm">Buscar indicador &rarr;</a>
+  </div>
+</div>
+{% endblock %}
