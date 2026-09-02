@@ -164,8 +164,10 @@ if __name__ == "__main__":
     logger.info("Iniciando scheduler CTI-IOC desde terminal...")
     _scheduler = start_scheduler()
 
+    logger.info("Scheduler en ejecución. Presione Ctrl+C para detener.")
     try:
-        input("\nScheduler en ejecución. Presione ENTER para detener...\n")
+        while True:
+            time.sleep(1)
     except KeyboardInterrupt:
         logger.info("Interrupción de teclado recibida.")
     finally:
