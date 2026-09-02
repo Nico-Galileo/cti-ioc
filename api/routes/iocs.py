@@ -21,6 +21,11 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from database.correlations import (
+    get_campaign_summary,
+    get_correlations_by_threat_type,
+    get_shared_indicators,
+)
 from database.db import get_session
 from database.models import IOC
 
@@ -126,6 +131,54 @@ def get_estadisticas(session: Session = Depends(_db_session)):
         por_fuente = _contar_por(IOC.source_name),
         por_estado = _contar_por(IOC.status),
     )
+
+
+@router.get(
+    "/correlaciones/amenazas",
+    summary="Correlación de IOCs por categoría de amenaza",
+)
+def get_correlaciones_amenazas() -> list[dict]:
+    """Agrupa los IOCs por threat_type con su desglose por tipo y fuente.
+
+    Delega en database.correlations.get_correlations_by_threat_type().
+
+    Returns:
+        Lista de correlaciones por categoría de amenaza, ordenada por
+        volumen total descendente.
+    """
+    return get_correlations_by_threat_type()
+
+
+@router.get(
+    "/correlaciones/compartidos",
+    summary="IOCs corroborados por múltiples fuentes",
+)
+def get_correlaciones_compartidos() -> list[dict]:
+    """Devuelve los IOCs cuyo valor aparece tanto en urlhaus como en alienvault_otx.
+
+    Delega en database.correlations.get_shared_indicators().
+
+    Returns:
+        Lista de indicadores compartidos entre ambas fuentes, con mayor
+        nivel de confianza al estar corroborados de forma independiente.
+    """
+    return get_shared_indicators()
+
+
+@router.get(
+    "/correlaciones/campanas",
+    summary="Resumen de campañas de amenaza más relevantes",
+)
+def get_correlaciones_campanas() -> list[dict]:
+    """Resume las 10 campañas (threat_type) más relevantes entre IOCs activos.
+
+    Delega en database.correlations.get_campaign_summary().
+
+    Returns:
+        Lista de campañas ordenada por volumen descendente, con su
+        distribución por tipo de indicador y fecha del IOC más reciente.
+    """
+    return get_campaign_summary()
 
 
 @router.get(

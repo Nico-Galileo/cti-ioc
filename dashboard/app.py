@@ -154,6 +154,26 @@ def listar_iocs():
     )
 
 
+@app.route("/correlaciones")
+def correlaciones():
+    """Página de correlaciones básicas entre IOCs.
+
+    Consulta los tres endpoints de correlación de la API
+    (por amenaza, indicadores compartidos entre fuentes y resumen de
+    campañas) y renderiza correlaciones.html con los tres resultados.
+    """
+    por_amenaza  = _get("/iocs/correlaciones/amenazas")
+    compartidos  = _get("/iocs/correlaciones/compartidos")
+    campanas     = _get("/iocs/correlaciones/campanas")
+
+    return render_template(
+        "correlaciones.html",
+        por_amenaza=por_amenaza if isinstance(por_amenaza, list) else [],
+        compartidos=compartidos if isinstance(compartidos, list) else [],
+        campanas=campanas if isinstance(campanas, list) else [],
+    )
+
+
 @app.route("/buscar")
 def buscar():
     """Página de búsqueda exacta de un IOC por su valor.
